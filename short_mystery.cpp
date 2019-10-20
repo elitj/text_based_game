@@ -47,12 +47,24 @@ void vTake();         void vDrop();        void vGo();
 void vNorth();        void vNortheast();   void vEast();
 void vSoutheast();    void vSouth();       void vSouthwest();
 void vWest();         void vNorthwest();   void vUp();
-void vDown();         void vUse();         void vWear();
+void vDown();         
+
+void vUse();          void vWear();
 void vEat();          void vDrink();
 void vCombine();      void vTurn();        void vPut();
 void vKill();         void vBreak();       void vKiss();
 void vBurn();         void vClimb();       void vCut();
 void vDig();          void vRemove();
+
+void vLie();          void vSit();         void vGive();
+void vSleep();        void vWash();        void vBite();
+void vFart();         void vFight();       void vHang();
+void vCook();         void vOpen();        void vClose();
+void vRub();          void vRide();        void vRing();
+void vShoot();        void vStop();        void vDance();
+void vDive();         void vDie();         void vDrive();
+void vWake();
+
 void vArrange();
 void vCalculate();
 void vItemize();
@@ -106,6 +118,30 @@ int main()
   addV("cut", &vCut, 5);
   addV("dig", &vDig, 0);
   addV("remove", &vRemove, 5);
+
+  addV("lie", &vLie, 4);
+  addV("sit", &vSit, 4);
+  addV("give", &vGive, 3);
+  addV("sleep", &vSleep, 4);
+  addV("wash", &vWash, 2);
+  addV("bite", &vBite, 2);
+  addV("fart", &vFart, 4);
+  addV("fight", &vFight, 5);
+  addV("hang", &vHang, 2);
+  addV("cook", &vCook, 3);
+  addV("open", &vOpen, 5);
+  addV("close", &vClose, 2);
+  addV("rub", &vRub, 2);
+  addV("ride", &vRide, 2);
+  addV("ring", &vRing, 2);
+  addV("shoot", &vShoot, 5);
+  addV("stop", &vStop, 4);
+  addV("dance", &vDance, 1);
+  addV("dive", &vDive, 4);
+  addV("die", &vDie, 1);
+  addV("drive",&vDrive, 2);
+  addV("wave", &vWake, 2);
+
   addV("arrange", &vArrange, 2);
   addV("calculate", &vCalculate, 2);
   addV("itemize", &vItemize, 2);
@@ -114,6 +150,7 @@ int main()
   //  -----------------------------------
   //  CONSTRUCTION OF SPECIFIC GAME WORLD
   //  -----------------------------------
+
 
   room cenote("BRIGHT CENOTE");
   currentRoom=&cenote;
@@ -146,7 +183,7 @@ int main()
   info.connect(tourist,3);
   booth.connect(tourist,6);
   
-  //item iUnknown_Item("unknown_item");
+  item iUnknown_Item("unknown_item");
   item iVines("vines");  iVines.chain();
   item iWater("water");  iWater.chain();
   item iSlab("slab"); iSlab.chain();
@@ -159,6 +196,7 @@ int main()
   item iMan("man"); iMan.chain();
   item iJug("jug");
   item iDais("dais"); iDais.chain();
+  item iProcession("procession"); iProcession.chain();
   item iOldy("gentleman"); iOldy.chain();
   item iRack("rack");
   item iMap("map"); iMap.chain();
@@ -203,6 +241,7 @@ int main()
   top.addJunk(iMan);
   top.addJunk(iJug);
   top.addJunk(iDais);
+  jungle.addJunk(iProcession);
   info.addJunk(iOldy);
   info.addJunk(iRack);
   info.addJunk(iMap);
@@ -212,30 +251,33 @@ int main()
   booth.addJunk(iSnowglobe);
   booth.addJunk(iCash);
 
-  //  addI("unknown_item",&iUnknown_Item); // must be in first position
-  /*addI("gloves", &iWorkGloves);
-  addI("schedule",&iSchedule);
-  addI("panel",&iPanel);
-  addI("engine",&iEngine);
-  addI("cage",&iCage);
-  addI("chalkboard",&iChalkboard);
-  addI("flowers",&iFlowers);         addI("flowerpot",&iFlowers);
-  addI("form",&iForm);
-  addI("magazine",&iMagazine);
-  addI("tv",&iTV);
-  addI("car",&iHatchback);           addI("hatchback",&iHatchback);
-  addI("porn",&iPorn);               addI("pornography",&iPorn);
-  addI("floor",&iFloor);
-  addI("cargo",&iCargo);
-  addI("gyroscope",&iGyroscope);     addI("gyro",&iGyroscope);
-  addI("boss",&iBoss);               addI("steve",&iBoss);
-  */
+  addI("unknown_item",&iUnknown_Item); // must be in first position
+  addI("vines", &iVines);
+  addI("water",&iWater);
+  addI("slab",&iSlab);
+  addI("body",&iBody);
+  addI("teacup",&iTea);
+  addI("flask",&iFlask);
+  addI("flint",&iFlint);         addI("artifacts",&iArtifacts);
+  addI("tinder",&iTinder);
+  addI("woman",&iWoman);
+  addI("man",&iMan);
+  addI("jug",&iJug);           addI("cats",&iCats);
+  addI("dais",&iDais);               addI("girl",&iGirl);
+  addI("procession",&iProcession);
+  addI("oldy",&iOldy);
+  addI("rack",&iRack);     addI("snowglobe",&iSnowglobe);
+  addI("map",&iMap);               addI("cash",&iCash);
+
+
   //  -------------------------
   //  END OF WORLD CONSTRUCTION
   //  -------------------------
 
+
   cout << "You are inside some caves." << endl << endl;
   vLook();
+
 
   //  --------------------------
   //  TURN PROCEDURE STARTS HERE
@@ -362,8 +404,8 @@ void preVerb(int index)
 	    {cout << cVerb << " what?" << endl; return;}
 	  if(cNoun2!="")
 	    {
-	      cout << "I'm just a simple man who " << cVerb 
-		   << "s things one at a time." << endl;
+	      cout << "Try simplifying your command \'" << cVerb 
+		   << "\'." << endl;
 	      return;
 	    }
 	  break;
@@ -396,6 +438,11 @@ void preVerb(int index)
 		x1=itemPointers[i];
 		break;
 	      }
+	  if(!(*x1).isVisible())
+	    {
+	      cout << "You don't see any " << cNoun1 << " here." << endl;
+	      return;
+	    }
 	}
       if(cNoun2!="")
 	{
@@ -405,6 +452,11 @@ void preVerb(int index)
 		x2=itemPointers[j];
 		break;
 	      }
+	  if(!(*x2).isVisible())
+	    {
+	      cout << "You don't see any " << cNoun2 << " here." << endl;
+	      return;
+	    }
 	}
       (*verbFunctions[index])();
     }
@@ -452,6 +504,10 @@ void addI(string itemName, item* itemPtr)
   totalItems++;
 }
 
+  //  ----------------------
+  //  VERB COMMAND FUNCTIONS
+  //  ----------------------
+
 void vUnknown()
 {
   cout << "I don't know that word." << endl;
@@ -495,37 +551,58 @@ void vLook()
 {
   if(cNoun1!="")
     {
-	cout << (*x1).getLook() << endl;
-	return;
+      switch((*x1).getVerbState("look"))
+	{
+	case 0: cout << (*x1).getLook() << endl; break;
+	case 1: cout << (*x1).getState(1) << endl; break;
+	case 2: cout << (*x1).getState(2) << endl; break;
+	default: cout << "Error in look function" << endl; break;
+	}
+      return;
     }
-  cout << (*currentRoom).getName() << endl 
+  cout << (*currentRoom).getName() << endl
        << (*currentRoom).getLook() << endl;
   (*currentRoom).listJunk();
+  return;
 }
 
 void vTake()
 {
 
   if(inventory.hasJunk(cNoun1))
-    {
-      cout << "You're already carrying that." << endl;
-      return;
-    }
-  //change
-  if((*x1).isChained())
-    {
-      cout << "You can't move that." << endl;
-      return;
-    }
-  if((*x1).getEventState()==1)
-    {
-      cout << "It's fine where it is." << endl;
-      return;
-    }
+    cout << "You're already carrying that." << endl;
+  else if((*x1).getPronoun()!="it")
+    cout << "No, " << (*x1).getPronoun() << "\'s not your type." << endl;
+  else if((*x1).isChained())
+    cout << "You can't move that." << endl;
+  else if((*x1).getEventState()==1)
+    cout << "It's fine where it is." << endl;
   else
     {
-      inventory.addJunk((*currentRoom).takeJunk(cNoun1));
-      cout << "Taken." << endl;
+      int status = (*x1).getVerbState("take");
+      int index;
+      string temp;
+      switch(status)
+	{
+	case 0:
+	  inventory.addJunk(*(*currentRoom).takeJunk(cNoun1));
+	  cout << "Taken." << endl;
+	  break;
+	case 1: // taking reveals something underneath.
+	  cout << "Taken." << endl << (*x1).getState(1) << endl;
+	  (*(*x1).goUnder()).makeVisible();
+	  (*(*x1).goUnder()).resetPrep(0);
+	  (*x1).resetExternals();
+	  (*x1).updateVerb("take",0);
+	  inventory.addJunk(*(*currentRoom).takeJunk(cNoun1));
+	  index = (*currentRoom).getVerbState("look");
+	  temp = (*currentRoom).getState(index);
+	  (*currentRoom).setLook(temp);
+	  break;
+	default:
+	  cout << "Bad verb state for \'take\'." << endl;
+	  break;
+	}
     }
   return;
 }
@@ -539,7 +616,7 @@ void vDrop()
     }
   else 
     {
-      (*currentRoom).addJunk(inventory.takeJunk(cNoun1));
+      (*currentRoom).addJunk(*inventory.takeJunk(cNoun1));
       cout << "Dropped." << endl;
     }
   return;
@@ -752,7 +829,17 @@ void vWear()
        << endl;
 }
 
-void vEat() {}
+void vEat()
+{
+  int status = (*x1).getVerbState("eat");
+  switch(status)
+    {
+    case 0:
+      cout << "You can't eat that." << endl;
+      break;
+    default: cout << "Nothing's edible yet." << endl;
+    }
+}
 
 void vDrink() {}
 
@@ -803,13 +890,14 @@ void vArrange()
 	  cout << (*x1).getState(status) << endl;
 	  (*x1).setEventState(1);
 	  (*x1).updateVerb("arrange",2);
-	  (*currentRoom).addJunk(inventory.takeJunk("flowers"));
+	  (*currentRoom).addJunk(*inventory.takeJunk("flowers"));
 	}
       break;
     case 2:
     case 3:
     case 4:
       cout << (*x1).getState(status) << endl;
+      if(status!=4) (*x1).updateVerb("arrange",status+1);
       break;
     default:
       cout << "Bad verb state for cNoun1." << endl;
@@ -818,8 +906,48 @@ void vArrange()
   return;
 }
 
+void vLie() {}
+void vSit() {}
+void vGive() {}
+void vSleep() {}
+void vWash() {}
+void vBite() {}
+void vFart() {}
+void vFight() {}
+void vHang() {}
+void vCook() {}
+void vOpen() 
+{
+  if(cNoun2=="")
+    {
+      switch((*x1).getVerbState("open"))
+	{
+	case 0: cout << "You can't open that." << endl; break;
+	case 1: 
+	  cout << (*x1).getState(1) << endl;
+	  (*x1).addVerb("look",2); // this could be dangerous.
+	  (*currentRoom).setDoor(9,1); //as could this.
+	  (*x1).updateVerb("open",2);
+	  break;
+	case 2: cout << "It's already open." << endl; break;
+	case 3: cout << (*x1).getState(3) << endl; break;
+	default: cout << "Error in open function" << endl; break;
+	}
+    }
+  else cout << "Unimplemented" << endl;
+}
+void vClose() {}
+void vRub() {}
+void vRide() {}
+void vRing() {}
+void vShoot() {}
+void vStop() {}
+void vDance() {}
+void vDive() {}
+void vDie() {}
+void vDrive() {}
+void vWake() {}
 
 void vCalculate() {}
 void vItemize() {}
 void vSaunter() {}
-
